@@ -18,6 +18,9 @@ import (
 // the blockchain at frequient intervals with power generation data in the memo
 // field of the tx.
 // Polling interval would be 5 minutes, 1440/5 = 288 updates a day
+	// MW Is this the amount of calls from the rasberry pi per day? This might be too much.
+	// Not sure what the colors here mean. 
+	// SHould this be what is listening to a protected MQTT channel?
 
 var PublicKey string
 var Seed string

@@ -23,6 +23,7 @@ type Entity struct {
 	// This ideally must include the developer fee within it, so that investors
 	// don't have to invest in two things. It would also make sense because the contractors
 	// sometimes would hire developers themselves.
+		// MW: Might need to tweak this description. A potential contractor bids and gives a quote for a specific product or service as part of the project. The total amount that invertors invest in (the total size of the project) is the sum of all those approved quotes and budgets.
 	Contractor bool
 	// A guarantor is somebody who can assure investors that the school will get paid
 	// on time. This authority should be trusted and either should be vetted by the law
@@ -31,6 +32,7 @@ type Entity struct {
 	// nice Pineapple Fund guy. This can also be an insurance company, who is willing to
 	// guarantee for specific school and the school can pay him out of chain / have
 	// that as fee within the contract the originator
+		// MW: Guarantors also ensure the Investors get paid their fees (not just the school). BTW the guarantor description is further below
 	Developer bool
 	// A developer is someone who installs the required equipment (Raspberry Pi,
 	// network adapters, anti tamper installations and similar) In the initial
@@ -40,6 +42,7 @@ type Entity struct {
 	// in fiat or can be a portion of the funds the investors chooses to invest in.
 	// a contractor may also employ developers by himself, so this entity is not
 	// strictly necessary.
+		//MW: Developers (in this case) are normally the solar developers that do the installation of hardware and execute the engineering plan. In real estate projects, the developers are often the originators and project coordinators. 
 	Originator bool
 	// An Originator is an entity that will start a project and get a fixed fee for
 	// rendering its service. An Originator's role is not restricted, the originator
