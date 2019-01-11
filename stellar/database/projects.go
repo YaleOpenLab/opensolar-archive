@@ -5,6 +5,7 @@ package database
 // difficult for us to store this on the blockchain. We use boltdb no since we don't
 // do that much relational mapping, but in the case we need that, we can modify
 // this package to do that.
+	// MW: Making a comment in here to see how it places itself in the new branch Martin_comments
 import (
 	"encoding/json"
 	"fmt"
