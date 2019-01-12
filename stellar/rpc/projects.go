@@ -114,13 +114,11 @@ func getProject() {
 	http.HandleFunc("/project/get", func(w http.ResponseWriter, r *http.Request) {
 		checkOrigin(w, r)
 		checkGet(w, r)
-		URLPath := r.URL.Path
-		// so we now have the URL path
-		// slice "/project/" off from the URLPath
-		keyS := URLPath[7:]
-		// we now need to get the project corresponding to keyS
-		// the rpc accepts the key as int though, so string -> int
-		uKey := utils.StoI(keyS)
+		if r.URL.Query()["index"] == nil {
+			errorHandler(w, r, http.StatusNotFound)
+			return
+		}
+		uKey := utils.StoI(r.URL.Query()["index"][0])
 		contract, err := database.RetrieveProject(uKey)
 		if err != nil {
 			errorHandler(w, r, http.StatusNotFound)
@@ -136,19 +134,19 @@ func getProject() {
 }
 
 func projectHandler(w http.ResponseWriter, r *http.Request, stage float64) {
-		checkOrigin(w, r)
-		checkGet(w, r)
-		allProjects, err := database.RetrieveProjects(stage)
-		if err != nil {
-			errorHandler(w, r, http.StatusNotFound)
-			return
-		}
-		projectsJson, err := json.Marshal(allProjects)
-		if err != nil {
-			errorHandler(w, r, http.StatusNotFound)
-			return
-		}
-		WriteToHandler(w, projectsJson)
+	checkOrigin(w, r)
+	checkGet(w, r)
+	allProjects, err := database.RetrieveProjects(stage)
+	if err != nil {
+		errorHandler(w, r, http.StatusNotFound)
+		return
+	}
+	projectsJson, err := json.Marshal(allProjects)
+	if err != nil {
+		errorHandler(w, r, http.StatusNotFound)
+		return
+	}
+	WriteToHandler(w, projectsJson)
 }
 
 func getPreOriginProjects() {
