@@ -38,6 +38,8 @@ func Authenticate() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	PublicKey = pubkey
+	Seed = string(data)
 }
 
 // New generates a new password pair that should be used to authenticate a teller
