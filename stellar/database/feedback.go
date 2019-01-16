@@ -1,5 +1,7 @@
 package database
 
+// MW: Need this explained a bit better
+
 // entities defines a list of all the entities involved in the system like
 // investor, recipient, order, etc
 // how does a contract evolve into an order? or do we make contracts orders?

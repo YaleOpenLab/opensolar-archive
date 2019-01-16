@@ -10,15 +10,19 @@ import (
 // and that's what we have right now. If we want this to be an auction as well, we
 // need to have a specific date of sorts where all the contractors can propose
 // contracts immmediately, without latency.
+
 // Also, have some kind of deposit for Contractors (5% or something) so that they
-// don't go back on their investment and slash their ivnestment by 10% if this happens
+// don't go back on their investment and slash their ivnestment (investment by contractors?) by 10% if this happens
 // and distribute that amount to the recipient directly and reduce everyone's bids
-// by that amount to account for the change in underlying Project
+// by that amount to account for the change in underlying Project. MW: Explain this better
+
 // also, a given Contractor right now is allowed only for one final bid for blind
 // auction advantages (no price disvocery, etc). If we want to change this, we must
 // have an auction handler that will take care of this.
 
 func NewContractor(uname string, pwd string, seedpwd string, Name string, Address string, Description string) (Entity, error) {
+	// MW: Is this also all the information the contractor needs to give to be onboarded? Might need more things like a Tax ID, etc. 
+	// Contractors should be onboarded through a verificartion process too. 
 	return NewEntity(uname, pwd, seedpwd, Name, Address, Description, "contractor")
 }
 
@@ -26,7 +30,7 @@ func (contractor *Entity) ProposeContract(panelSize string, totalValue int, loca
 	var pc Project
 	var err error
 
-	// for this, create a new contract and store in the contracts db. Wea re sorting
+	// for this, create a new contract and store in the contracts db. We are sorting
 	// by stage, so it shouldn't matter a whole lot
 	indexCheck, err := RetrieveAllProjects()
 	if err != nil {

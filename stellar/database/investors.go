@@ -14,16 +14,18 @@ import (
 )
 
 // the investor struct contains all the investor details such as
-// public key, seed (if account is created on the website) and ot her stuff which
+// public key, seed (if account is created on the website) and other stuff which
 // is yet to be decided
 
 // All investors will be referenced by their public key, name is optional (maybe necessary?)
-// we need to stil ldecide on identity and stuff and how much we want to track
+// we need to still decide on identity and stuff and how much we want to track
 // people who invest in the schools
 type Investor struct {
 	VotingBalance int // this will be equal to the amount of stablecoins that the
 	// investor possesses, should update this every once in a while to ensure voting
 	// consistency.
+	// MW: Invetors have vote amounts equal to the money they have allocated to the system? 
+	// These are votes to devide contracts proposed by contractors?
 	AmountInvested float64
 	// total amount, would be nice to track to contact them,
 	// give them some kind of medals or something
@@ -33,6 +35,7 @@ type Investor struct {
 	// linking it here for now
 	U User
 	// user related functions are called as an instance directly
+	// MW: I think the investor struct should have more info, like name, unique ID, metadata; should it also store their bank account or equivalent?
 }
 
 // NewInvestor creates a new investor object when passed the username, password hash,
@@ -41,6 +44,7 @@ type Investor struct {
 // insert their publickey into the system and then have hanlders for them signing
 // transactions
 // TODO: add anonymous investor signing handlers
+// MW: WHile anonymity to the public is important, we need to consider all KYC compliance.
 func NewInvestor(uname string, pwd string, seedpwd string, Name string) (Investor, error) {
 	var a Investor
 	var err error
@@ -135,6 +139,7 @@ func RetrieveAllInvestors() ([]Investor, error) {
 	return arr, err
 }
 
+// MW: WHat is this validation for?
 func ValidateInvestor(name string, pwhash string) (Investor, error) {
 	var rec Investor
 	user, err := ValidateUser(name, pwhash)
@@ -166,6 +171,7 @@ func (a *Investor) AddVotingBalance(votes int) error {
 // through the trust channel. Each trustline costs 0.5XLM.
 func (a *Investor) TrustAsset(asset build.Asset, limit string, seed string) (string, error) {
 	// TRUST is FROM recipient TO issuer
+	// MW: Not clear on this. What do you mean by issuer?
 	trustTx, err := build.Transaction(
 		build.SourceAccount{a.U.PublicKey},
 		build.AutoSequence{SequenceProvider: xlm.TestNetClient},
@@ -191,7 +197,7 @@ func (a *Investor) CanInvest(balance string, targetBalance string) bool {
 }
 
 func (a *Investor) VoteTowardsProposedProject(allProposedProjects []Project, vote int) error {
-	// split the coting stuff into a separate function
+	// split the (coting) stuff into a separate function
 	// we need to go through the contractor's proposed projects to find an project
 	// with index pProjectN
 	for _, elem := range allProposedProjects {

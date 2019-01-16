@@ -3,6 +3,9 @@ package database
 import (
 	utils "github.com/YaleOpenLab/smartPropertyMVP/stellar/utils"
 )
+// TODO: Describe Originators role and properties
+
+//MW: Where does the User struct get inherited in the code for originators and the other entities?
 
 func NewOriginator(uname string, pwd string, seedpwd string, Name string, Address string, Description string) (Entity, error) {
 	return NewEntity(uname, pwd, seedpwd, Name, Address, Description, "originator")

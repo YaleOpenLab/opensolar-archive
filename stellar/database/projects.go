@@ -2,7 +2,7 @@ package database
 
 // the database package maintains read / write operations to the orderbook
 // we need an orderbook because there is no state on Stellar which makes it
-// difficult for us to store this on the blockchain. We use boltdb no since we don't
+// difficult for us to store this on the blockchain. We use boltdb now since we don't
 // do that much relational mapping, but in the case we need that, we can modify
 // this package to do that.
 import (
@@ -15,17 +15,21 @@ import (
 )
 
 // DBParam is a backend meta structure used by the backend Project, which encompasses
-// more information than this structure but all that information would nto be
+// more information than this structure but all that information would (nto) be
 // needed for transacting in assets and interfacing with other elements in the system
 
+// MW: Is this the main struct for project information? or is it this plus the 'Project' struct?
 type DBParams struct {
 	Index int // an Index to keep quick track of how many projects exist
 
 	PanelSize   string // size of the given panel, for diplsaying to the user who wants to bid stuff
-	TotalValue  int    // the total money that we need from investors
+	// TODO: Consider other specs to denote project size, for example, if it has battery-based storage, the 
+	// price and nature of the project is different. 
+	TotalValue  int    // the total money that we need from investors (consider 'TotalProjectCost')
 	Location    string // where this specific solar panel is located
 	MoneyRaised int    // total money that has been raised until now
-	Years       int    // number of years the recipient has chosen to opt for
+	// MW: Explain this Year variable? Is it payment period? This can be fluid based on the tariff used. 
+	Years       int    // number of years the recipient has chosen to opt for 
 	Metadata    string // any other metadata can be stored here
 
 	Votes int // the number of votes towards a proposed contract by investors
@@ -62,7 +66,7 @@ type DBParams struct {
 // DBParams is also what's needed by the assets and other stuff whereas the other fields
 // are needed in other parts, another nice distinction
 type Project struct {
-	Params DBParams // Params is the former Order struct improted into the new Project structure
+	Params DBParams // Params is the former Order struct imported into the new Project structure
 
 	Originator    Entity // a specific contract must hold the person who originated it
 	Contractor    Entity // the person with the proposed contract
@@ -76,12 +80,13 @@ type Project struct {
 // TODO: get comments on the various stages involved here
 var (
 	PreOriginProject      = float64(0) // Stage 0: Originator approaches the recipient to originate an order
-	LegalContractStage    = 0.5        // Stage 0.5: Legal contract between the originator and the recipient, out of blockchain
-	OriginProject         = float64(1) // Stage 1: Originator proposes a contract on behalf of the recipient
+										// MW: This stage 0.5 should be more like an MOU or letter of intent rather than a full-on legal contract
+	LegalContractStage    = 0.5        // Stage 0.5: Legal contract between the originator and the recipient, out of blockchain. 
+	OriginProject         = float64(1) // Stage 1: Originator/s proposes a contract on behalf of the recipient. MW: Are there multisig features for this?
 	OpenForMoneyStage     = 1.5        // Stage 1.5: The contract, even though not final, is now open to investors' money
 	ProposedProject       = float64(2) // Stage 2: Contractors propose their contracts and investors can vote on them if they want to
-	FinalizedProject      = float64(3) // Stage 3: Recipient chooses a particular contract for finalization
-	FundedProject         = float64(4) // Stage 4: Review the legal contract and finalize a particular contractor
+	FinalizedProject      = float64(3) // Stage 3: Recipient chooses a particular contract for finalization. This can be arbitraty or following a specific tender process
+	FundedProject         = float64(4) // Stage 4: Extend and Review the final legal contract, re-open for investment and finalize a particular contractor
 	InstalledProjectStage = float64(5) // Stage 5: Installation of the panels / houses by the developer and contractor
 	PowerGenerationStage  = float64(6) // Stage 6: Power generation and trigerring automatic payments, cover breach, etc.
 	DebtPaidOffStage      = float64(7) // Stage 7: The stage at which the recipient pays back for his solar panels
@@ -98,6 +103,7 @@ func NewOriginProject(project DBParams, originator Entity) (Project, error) {
 	proposedProject.Originator = originator
 	err := proposedProject.SetOriginProject()
 	return proposedProject, err
+	// MW: How is this stored on the blockchain? where is the space in the code to load physical documents stored and hashed from ipfs?
 }
 
 // RecipientAuthorizeContract authorizes a specific project from the recipients side
@@ -108,6 +114,8 @@ func (project *Project) RecipientAuthorizeContract(recipient Recipient) error {
 	if project.Params.ProjectRecipient.U.Name != recipient.U.Name {
 		return fmt.Errorf("You can't authorize a project which is not assigned to you!")
 	}
+	// MW: COnsider that for this authorization to happen, there could be a verification requirement (eg. that the project is relatively feasible),
+	// and that it may need several approvals for it (eg. Recipient can be two figures here —the school entity and the department of education who is the actual issuer)
 	// set the project as both originated and ready for investors' money
 	err := project.SetOriginProject()
 	if err != nil {
@@ -138,7 +146,7 @@ func FinalizeProject(project Project) error {
 			// this is the contract whose stage we need ot upgrade and whose thing we must add to the contract
 			// TODO: weak check, should have something better here
 			dbProjects.Params = project.Params         // overwrite price related details
-			dbProjects.Contractor = project.Contractor // store the contractor for the given order
+			dbProjects.Contractor = project.Contractor // store the contractor for the given order. MW: Is this already considering multiple contractors?
 			dbProjects.Guarantor = project.Guarantor   // add guarantor
 			dbProjects.SetFinalizedProject()           // set the stage to be open for investors
 			dbProjects.Save()                          // save in db
@@ -167,6 +175,7 @@ func (a *Project) Save() error {
 	return err
 }
 
+// MW: Improve the funcion names (i.e. Retrieve Project, AllProjects, Projects)
 // RetrieveProject retrieves the project with the specified index from the database
 func RetrieveProject(key int) (Project, error) {
 	var inv Project
@@ -352,6 +361,7 @@ func RetrieveProjectsR(stage float64, index int) ([]Project, error) {
 	return arr, err
 }
 
+// MW: Consider the steps required for the promotion of the project to happen (eg. verification and validation)
 func PromoteStage0To1Project(projects []Project, index int) error {
 	// we need to upgrade the contract's whose index is contractIndex to stage 1
 	for _, elem := range projects {
@@ -414,6 +424,7 @@ func (a *Project) SetPowerGenerationStage() error {
 	return a.Save()
 }
 
+// MW: WHat is this?
 func FindInKey(key int, arr []Project) (Project, error) {
 	var dummy Project
 	for _, elem := range arr {
@@ -427,11 +438,13 @@ func FindInKey(key int, arr []Project) (Project, error) {
 // CalculatePayback is a TODO function that should simply sum the PBToken
 // balance and then return them to the frontend UI for a nice display
 func (project Project) CalculatePayback(amount string) string {
-	// the idea is that we should be able ot pass an assetId to this function
+	// the idea is that we should be able to pass an assetId to this function
 	// and it must calculate how much time we have left for payback. For this example
-	// until twe do the db stuff, lets pass a few params (although this could be done
+	// until we do the db stuff, lets pass a few params (although this could be done
 	// separately as well).
 	// TODO: this functon needs to be the payback function
+	// Consider not only the PBTokens amount, but also the rate of solar generation or consumption per year 
+	// (Eg. PBTokens are 10'000 and the rate/yrs is 2000, thus 5 years is the estimated bond maturity and payback remaining time)
 	amountF := utils.StoF(amount)
 	amountPB := (amountF / float64(project.Params.TotalValue)) * float64(project.Params.Years*12)
 	amountPBString := utils.FtoS(amountPB)
