@@ -6,6 +6,8 @@ import (
 	"github.com/fatih/color"
 	"log"
 	"strings"
+	"os"
+	"os/signal"
 
 	consts "github.com/YaleOpenLab/smartPropertyMVP/stellar/consts"
 )
@@ -33,6 +35,7 @@ var Seed string
 func main() {
 	CreateHomeDir()
 	CreateFile()
+	Authenticate()
 	promptColor := color.New(color.FgHiYellow).SprintFunc()
 	whiteColor := color.New(color.FgHiWhite).SprintFunc()
 	rl, err := readline.NewEx(&readline.Config{
@@ -46,10 +49,30 @@ func main() {
 	}
 	defer rl.Close()
 	// main shell loop
+	var t Client
+	t.Info = "Console CLI Client for testing"
+	t.Location = "Location unknown. Scanning.."
+	t.UniqueId = "password" // the thing we need for unlocking the auth.txt file
+	go StartServer()
+	signalChan := make(chan os.Signal, 1)
+	cleanupDone := make(chan struct{})
+	signal.Notify(signalChan, os.Interrupt)
+	go func() {
+		<-signalChan
+		fmt.Println("\nSigint received in quit function. not quitting!")
+		close(cleanupDone)
+	}()
 	for {
 		// setup reader with max 4K input chars
 		msg, err := rl.Readline()
 		if err != nil {
+			var err error
+			err = EndHandler(t) // error, user wants to quit
+			for err != nil {
+				log.Println(err)
+				err = EndHandler(t)
+				<-cleanupDone // to prevent user from quitting when sigin arrives
+			}
 			break
 		}
 		msg = strings.TrimSpace(msg)
