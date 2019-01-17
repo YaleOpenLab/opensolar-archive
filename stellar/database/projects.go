@@ -15,10 +15,9 @@ import (
 )
 
 // DBParam is a backend meta structure used by the backend Project, which encompasses
-// more information than this structure but all that information would (nto) be
+// more information than this structure but all that information would be
 // needed for transacting in assets and interfacing with other elements in the system
-
-// MW: Is this the main struct for project information? or is it this plus the 'Project' struct?
+// DBParams is part of the 'Project' structs, but divided for good design principle and avoid a large struct
 type DBParams struct {
 	Index int // an Index to keep quick track of how many projects exist
 
@@ -28,7 +27,7 @@ type DBParams struct {
 	TotalValue  int    // the total money that we need from investors (consider 'TotalProjectCost')
 	Location    string // where this specific solar panel is located
 	MoneyRaised int    // total money that has been raised until now
-	// MW: Explain this Year variable? Is it payment period? This can be fluid based on the tariff used. 
+	// This is currently set as fixed, but will be fluid based on energy generation/consumption and tariff oracle 
 	Years       int    // number of years the recipient has chosen to opt for 
 	Metadata    string // any other metadata can be stored here
 
@@ -79,10 +78,9 @@ type Project struct {
 
 // TODO: get comments on the various stages involved here
 var (
-	PreOriginProject      = float64(0) // Stage 0: Originator approaches the recipient to originate an order
-										// MW: This stage 0.5 should be more like an MOU or letter of intent rather than a full-on legal contract
-	LegalContractStage    = 0.5        // Stage 0.5: Legal contract between the originator and the recipient, out of blockchain. 
-	OriginProject         = float64(1) // Stage 1: Originator/s proposes a contract on behalf of the recipient. MW: Are there multisig features for this?
+	PreOriginProject      = float64(0) // Stage 0: Originator approaches the recipient to originate an order. This is a project proposal.
+	LegalContractStage    = 0.5        // Stage 0.5: Legal agreement (eg. MOU or letter of intent) between the originator and the recipient, out of blockchain. Can use a 2 of 2 multisig.  
+	OriginProject         = float64(1) // Stage 1: Originator/s proposes a contract on behalf of the recipient. 
 	OpenForMoneyStage     = 1.5        // Stage 1.5: The contract, even though not final, is now open to investors' money
 	ProposedProject       = float64(2) // Stage 2: Contractors propose their contracts and investors can vote on them if they want to
 	FinalizedProject      = float64(3) // Stage 3: Recipient chooses a particular contract for finalization. This can be arbitraty or following a specific tender process
@@ -103,7 +101,6 @@ func NewOriginProject(project DBParams, originator Entity) (Project, error) {
 	proposedProject.Originator = originator
 	err := proposedProject.SetOriginProject()
 	return proposedProject, err
-	// MW: How is this stored on the blockchain? where is the space in the code to load physical documents stored and hashed from ipfs?
 }
 
 // RecipientAuthorizeContract authorizes a specific project from the recipients side
@@ -114,8 +111,9 @@ func (project *Project) RecipientAuthorizeContract(recipient Recipient) error {
 	if project.Params.ProjectRecipient.U.Name != recipient.U.Name {
 		return fmt.Errorf("You can't authorize a project which is not assigned to you!")
 	}
-	// MW: COnsider that for this authorization to happen, there could be a verification requirement (eg. that the project is relatively feasible),
-	// and that it may need several approvals for it (eg. Recipient can be two figures here —the school entity and the department of education who is the actual issuer)
+	// TODO: COnsider that for this authorization to happen, there could be a verification requirement (eg. that the project is relatively feasible),
+	// and that it may need several approvals for it (eg. Recipient can be two figures here —the school entity (more visible) and the department of education (more admin) who is the actual issuer)
+
 	// set the project as both originated and ready for investors' money
 	err := project.SetOriginProject()
 	if err != nil {
@@ -146,7 +144,7 @@ func FinalizeProject(project Project) error {
 			// this is the contract whose stage we need ot upgrade and whose thing we must add to the contract
 			// TODO: weak check, should have something better here
 			dbProjects.Params = project.Params         // overwrite price related details
-			dbProjects.Contractor = project.Contractor // store the contractor for the given order. MW: Is this already considering multiple contractors?
+			dbProjects.Contractor = project.Contractor // store the contractor for the given order. TODO: Consider that a single project has multiple contractors.
 			dbProjects.Guarantor = project.Guarantor   // add guarantor
 			dbProjects.SetFinalizedProject()           // set the stage to be open for investors
 			dbProjects.Save()                          // save in db
@@ -424,7 +422,7 @@ func (a *Project) SetPowerGenerationStage() error {
 	return a.Save()
 }
 
-// MW: WHat is this?
+// A function to find a project within an array of projects, given the key or index
 func FindInKey(key int, arr []Project) (Project, error) {
 	var dummy Project
 	for _, elem := range arr {

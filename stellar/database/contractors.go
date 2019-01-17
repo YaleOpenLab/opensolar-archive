@@ -11,18 +11,18 @@ import (
 // need to have a specific date of sorts where all the contractors can propose
 // contracts immmediately, without latency.
 
-// Also, have some kind of deposit for Contractors (5% or something) so that they
-// don't go back on their investment and slash their ivnestment (investment by contractors?) by 10% if this happens
-// and distribute that amount to the recipient directly and reduce everyone's bids
-// by that amount to account for the change in underlying Project. MW: Explain this better
+// TODO: Consider some kind of security deposit for Contractors (eg. 5% ) so that they
+// don't withdraw on their bid once they are in stage 3 (i.e. chosen by recipient); funds could be given to recipients or other involved stakeholders.
+// An alternative is to have a reputation system for contractors. 
 
-// also, a given Contractor right now is allowed only for one final bid for blind
-// auction advantages (no price disvocery, etc). If we want to change this, we must
+//TODO: A given Contractor right now is allowed only for one final bid for blind
+// auction advantages (i.e. no price disovcery, etc). If we want to change this, we must
 // have an auction handler that will take care of this.
 
+// Contractors are created here inheriting properties from Users/Entities
 func NewContractor(uname string, pwd string, seedpwd string, Name string, Address string, Description string) (Entity, error) {
-	// MW: Is this also all the information the contractor needs to give to be onboarded? Might need more things like a Tax ID, etc. 
-	// Contractors should be onboarded through a verificartion process too. 
+	// Create a new entity with the boolean of 'contractor' set to 'true.' This is done just by passing the string "contractor"
+	// TODO: Consider other specific information needed for contractors, other than the ones set for users and entities. It can go here, or set as a separate struct.
 	return NewEntity(uname, pwd, seedpwd, Name, Address, Description, "contractor")
 }
 

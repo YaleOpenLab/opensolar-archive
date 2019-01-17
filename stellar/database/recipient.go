@@ -20,8 +20,7 @@ type Recipient struct {
 	// instead of storing the PaybackAssets and the DebtAssets, we store this
 	U User
 	// user related functions are called as an instance directly
-	// TODO: better name? idk
-		// MW: Recipient is fine, but I wonder if we need more info to store about the recipient. 
+	// TODO: Consider how effective the name 'recipient' is. Consider more information about recipients to add in the struct,
 		// For example, recipients should be associated to sites eligible for projects (eg. a building or land where you can put panels), 
 		// (and eventually need to show proof of this)
 }
@@ -147,7 +146,6 @@ func (a *Recipient) SendAssetToIssuer(assetName string, issuerPubkey string, amo
 	return xlm.SendTx(seed, paymentTx)
 }
 
-// MW: This below explanation and model is very important. Lets go over it in detail
 
 // Payback is called when the receiver of the DEBToken wants to pay a fixed amount
 // of money back to the issuer of the DEBTokens. One way to imagine this would be

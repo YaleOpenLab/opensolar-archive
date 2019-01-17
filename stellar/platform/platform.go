@@ -14,8 +14,6 @@ import (
 
 // TODO: Describe what the platform entity is and what it does here. 
 
-//MW: How and when are these public and seed keys generated? Where are they stored? what is the difference between a public key, a seed and private key?
-
 // InitializePlatform returns the platform publickey and seed
 func InitializePlatform() (string, string, error) {
 	var publicKey string

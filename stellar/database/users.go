@@ -15,7 +15,6 @@ import (
 // commonly used functions so that we need not repeat the ssame thing for every instance.
 // Any entity interacting in the platform must be a User, and holds the information below.
 
-// MW: Is there a private key, or is this the seed? what is the difference with the passwords?
 type User struct {
 	Index int
 	// default index, gets us easy stats on how many people are there and stuff,
