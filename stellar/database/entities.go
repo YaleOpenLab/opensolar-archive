@@ -14,8 +14,10 @@ import (
 // TODO: in some ways, the Name, LoginUserName and LoginPassword fields can be
 // devolved into a separate User struct, that would result in less duplication as
 // well
+
+// Entities is a child from Users
 type Entity struct {
-	// User defines common params such as name, seed, publickey
+	// User defines common params such as name, seed, publickey. Users.go is inherited here
 	U User
 	// the name of the contractor / company that is contracting
 	// A contractor is party who proposes a specific some of money towards a

@@ -20,7 +20,9 @@ type Recipient struct {
 	// instead of storing the PaybackAssets and the DebtAssets, we store this
 	U User
 	// user related functions are called as an instance directly
-	// TODO: better name? idk
+	// TODO: Consider how effective the name 'recipient' is. Consider more information about recipients to add in the struct,
+		// For example, recipients should be associated to sites eligible for projects (eg. a building or land where you can put panels), 
+		// (and eventually need to show proof of this)
 }
 
 func NewRecipient(uname string, pwd string, seedpwd string, Name string) (Recipient, error) {
@@ -121,6 +123,7 @@ func ValidateRecipient(name string, pwhash string) (Recipient, error) {
 	return RetrieveRecipient(user.Index)
 }
 
+// MW: Is the platform the issuer? I think I need a better explanation of this.
 // SendAssetToIssuer sends back assets fromn an asset holder to the issuer of the asset.
 func (a *Recipient) SendAssetToIssuer(assetName string, issuerPubkey string, amount string, seed string) (int32, string, error) {
 	// SendAssetToIssuer is FROM recipient / investor to issuer
@@ -143,15 +146,18 @@ func (a *Recipient) SendAssetToIssuer(assetName string, issuerPubkey string, amo
 	return xlm.SendTx(seed, paymentTx)
 }
 
+
 // Payback is called when the receiver of the DEBToken wants to pay a fixed amount
 // of money back to the issuer of the DEBTokens. One way to imagine this would be
 // like an electricity bill, something that people pay monthly but only that in this
 // case, the electricity is free, so they pay directly towards the solar panels.
-// The process of Payback roughly involves the followign steps:
-// 1. Pay the issuer in DEBTokens with whatever amount desired.
+
+// The process of Payback roughly involves the following steps:
+// 1. Pay the issuer in DEBTokens with whatever amount desired. 
+// (MW: This amount to pay should be related to the energy generated and consumed, based on the teller. isnt it so?)
 // The oracle price of
 // electricity cost is a lower bound (since the government would not like it if people
-// default on their payments). Anything below the lower bound gets a warning in
+// default on their payments) (MW: Explain this lower bound and default issue more). Anything below the lower bound gets a warning in
 // project for people to pay more, we could also have a threshold mechanism that says
 // if a person constantly defaults for more than half the owed amount for three
 // consecutive months, we sell power directly to the grid. THis could also be used

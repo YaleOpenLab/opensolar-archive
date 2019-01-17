@@ -12,6 +12,8 @@ import (
 	xlm "github.com/YaleOpenLab/smartPropertyMVP/stellar/xlm"
 )
 
+// TODO: Describe what the platform entity is and what it does here. 
+
 // InitializePlatform returns the platform publickey and seed
 func InitializePlatform() (string, string, error) {
 	var publicKey string

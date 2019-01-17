@@ -50,6 +50,8 @@ func main() {
 			log.Fatal(err)
 		}
 		switch platformArg {
+			// MW: The explanation of the platform of contracts vs platform of platforms below is not very clear here
+			// lets go over it on wednesday
 		case 1:
 			fmt.Println("WELCOME TO THE PLATFORM OF CONTRACTS IDEA")
 			// the platform of contracts idea is the idea of having an open platform with
