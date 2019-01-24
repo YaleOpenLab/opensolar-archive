@@ -37,25 +37,27 @@ The full open source stack needs to cover all layers, from the energy and IoT ha
 The diagram below explains the general payment logic between investors, recipients and other project entities. The payment architecture of this is built on the Stellar blockchain which enables fiat and stablecoin interactions, and digital assets (explained below) that act as proof of payment or debt and can be fungible. The integration of the IoT devices (eg. the powermeter) is what drives payments once the project is fully deployed. 
 ![Payment Architecture](docs/figures/PaymentArchitecture.png)
 
-There are multiple approaches to onboard a user onto the platform which is run on the stellar blockchain. Broadly, this can be split into two categories based on whether a bank acts as a stablecoin issuer on stellar.
+There are different approaches to onboard a user (which either deposits or removes funds) onto the platform running on the stellar blockchain. Broadly, this can be split into two categories depending on whether the platform can use a bank that acts as an anchor and stablecoin issuer on Stellar.
 
-1. There is a bank which can act as a stablecoin issuer on stellar: This would mean that we can use the stablecoin issued by this bank as guarantee and allow investors to invest using this stablecoin.
+1. **Using a bank that acts as anchor and stablecoin issuer on Stellar**: This would mean that we can use the stablecoin issued by this bank as guarantee and allow investors to invest in projects using this stablecoin. (We are currently researching reputable actors that could provide this service).
 
- - Investor investing on the Platform: An investor wishing to invest in a project would be required to wire funds to the platform's bank account with the stablecoin issuing bank (or other means detailed later) and would receive stablecoin in return, which they can use on the platform.
+_Fund flows:_
+ - Investor investing on the Platform/Project: An investor wishing to invest in a project would be required to wire funds to the platform's bank account that can issue stablecoin on Stellar (or other means detailed later). The investor would receive the stablecoin in their platform's wallet and could use it to invest in a project.
 
- - Platform to Contractor: The Project holds stablecoin which the investor sent to it and will give this out to a Contractor during a scheduled payout. A contractor can choose to either keep the stablecoin as is or redeem the stablecoin for fiat with the issuing bank. Since each stablecoin is worht $1 and pegged by investor reserves, there should be no fees associated.
+ - Platform to Contractor: The Project's escrow account holds stablecoin (received from investors) and would transfer these out to a Contractor during a scheduled payout, with required approvals etc. A contractor can choose to either keep the stablecoin as is or redeem the stablecoin for fiat with the issuing bank (there can be a holdout period as guarantee that the services were duly delivered). Since each stablecoin is worth $1 and pegged by investor reserves, there should be no fees associated with the stablecoin transfer and back to fiat with the back. Wire costs can be incurred when wirinf the funds into the contractor's bank account.
 
- - Recipient to Platform (and indirectly, Investor): The recipient needs to wire funds to the platform's bank account (or other means detailed later) and they would receive stablecoin in return. This stablecoin is automatically paid to the investor and the recipient does not require any further interaction. An alternate way for anonymous donors to contribute towards the well being of a recipient would be to transfer stablecoins on their behalf to the platform, which then pays out investors accordingly.
+ - Recipient to Platform (and then Investors): The recipient needs to wire funds to the platform's bank account (or other means detailed later) and would receive stablecoins in return in their wallet. These stablecoins would be transfered to the project's account as per monthly electricity bills, and then transfered to the individual investor's account as per coupons or other payment schedules. An alternate way for anonymous or explicit impact-first donors/investors to contribute towards the project in the case of a breach (i.e. de-risking the project to investors) would be to transfer stablecoins on their behalf to the platform, which then pays out investors accordingly.
 
-2. There is no bank which can act as a stablecoin issuer on stellar: This would mean that the platform itself acts as a centralized stablecoin issuer.
+2. **No bank available to act as a stablecoin issuer on Stellar**: This would mean that the platform itself needs to act as a centralized stablecoin issuer.
 
- - Investor investing on the Platform: An investor who wishes to invest in a project would be required to wire funds to our bank account (or other means detailed later). We confirm this payment and invest directly on the user's behalf or can issue stablecoins which they can use to invest in assets later.
+_Fund flows_:
+ - Investor investing on the Platform/Project: An investor who wishes to invest in a project would be required to wire funds to the platform's bank account (or other means detailed later). The platform confirm this payment and invests directly on the user's behalf or can issue stablecoins which investors can use to invest in platform projects.
 
- - Platform to Contractor: The Platform Pays the Contractor directly in fiat since the platform is acting as the custodian of the investor's fiat funds. Updates are made on the blockchain with proofs of payments to avoid forgery attempts.
+ - Platform to Contractor: The platform pays the contractor directly in fiat from its bank account since the platform is acting as the custodian of the investor's fiat funds. Updates are made on the blockchain with proofs of payments to avoid forgery attempts.
 
- - Recipient to Platform (and indirectly, Investor): The recipient needs to wire funds to the platform's bank account (or other means detailed later) and the platform would confirm this automatically and pay the investor back in fiat.
+ - Recipient to Platform (and indirectly, Investor): The recipient needs to wire funds to the platform's bank account (or other means detailed later) and the platform would confirm this automatically and pay the investor back in fiat at the appropriate schedule.
 
-Other Means similar to Wiring Money to Banks:
+**Other Means similar to Wiring Money to Banks**:
 
 Wiring money to banks is one example of interfacing with fiat money. An easy and popular alternative would be to implement a payment provider like Stripe on top of the platform's bank account so investors and recipients can choose to pay back using other means like Credit / Debit Cards. We could also use a cryptocurrency payment provider like bitpay, which allows investors and recipients to invest / pay back in cryptocurrencies along with traditional payment providers.
 
