@@ -33,11 +33,11 @@ Other relevant contract layers include risk mitigation processes to deal with pa
 The full open source stack needs to cover all layers, from the energy and IoT hardware through the blockchain and into the front-end and user experience. 
 ![StackLayers](docs/figures/FullStack.png)
 
-#### PAYMENT ARCHITECTURE USING STELLAR
+### PAYMENT ARCHITECTURE USING STELLAR
 The diagram below explains the general payment logic between investors, recipients and other project entities. The payment architecture of this is built on the Stellar blockchain which enables fiat a stablecoin interactions, and digital assets (explained below) that act as proof of payment or debt and can be fungible. The integration of the IoT devices (eg. the powermeter) is what drives payments once the project is fully deployed. 
 ![Payment Architecture](docs/figures/PaymentArchitecture.png)
 
-##### digital assets on Stellar
+#### Digital Assets on Stellar
 Stellar has some design tradeoffs compared to Ethereum, especially with regard to the concept of "state" in Ethereum.
 
 Stellar doesn't support a Turing complete VM like Ethereum nor a stack based system like Bitcoin. Instead, it provides a standard set of operations which are decided on the protocol level and offers SDKs to build upon the platform. While limited in function, stellar possesses powerful fundamentals which could be used to partially replicate the notion of state in Ethereum.
@@ -63,10 +63,10 @@ Apart from ownership, the assets above serve other functions  that are useful:
 2. Parties that are willing to donate to a particular recipient can choose to payback their electricity bill on their behalf or choose to buy some of their Recipient Assets in order to hedge some risk on behalf of them. This is useful to introduce guarantors, which can protect investors in a breach scenario, and thus 'blend' the capital (ie. profit vs impact focus) by taking on the risk. This can also help big charitable organizations which invest in multiple projects, and who need to keep track of their donations in an easy way and provide publicly auditable proof of their donation towards a charity.
 
 
-##### ipfs and solar project documentation
+#### IPFS and solar project documentation
 While dealing with real world entities, we are inevitably faced with dealing with legal contracts. The platform should not worry about what's in the contract as long as it has been agreed to and vetted by both parties, so we store the contract in ipfs and commit the resulting hash in two split stellar transactions' memo fields. The memo field of stellar can only hold 28 characters, so we split the 46 character ipfs hash into two parts and pad the second hash with characters to denote that it is an ipfs hash and not some garbage value. This ipfs hash has to be checked on all parties' ends to ensure that this is the same contract that they agreed to earlier
 
-#### ENTITIES, PROJECTS & SMART CONTRACTS
+### ENTITIES, PROJECTS & SMART CONTRACTS
 There are various users and entities defined in the code (and more on the way), which cater to the different functions performed by entities in the real world:
  - PLATFORM- the platform is the server on which the projects are advertised on, and where the smart contracts that define the actor relationships are set. (i.e. OpenSolar)
  - INVESTOR - the investor is a person / organisation who invest in a particular project
@@ -108,7 +108,7 @@ A rough path taken by a specific project would be:
 
 
 
-#### CODE & REPOSITORY ARCHITECTURE
+### CODE & REPOSITORY ARCHITECTURE
 The diagram below explains how scripts and folders in the repository are linked.
 ![Scripts and Repo Architecture](docs/figures/RepoArchitecture.png)
 
@@ -139,5 +139,5 @@ if you already don't have the package. Then running `go test --tags="all" -cover
 
 #### Contributing
 This is an open source project and everyone is invited to contribute value to it. It is part of an open innovation framework and published using an MIT License so that it allows compatibility with proprietary layers. 
-![Open Contributions](OpenContributions.png)
+![Open Contributions](docs/figures/OpenContributions.png)
 
