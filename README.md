@@ -10,7 +10,7 @@ The payment platform is built on the Stellar blockchain, and our pilot projects 
 # Introduction
 
 #### BACKGROUND & CONTEXT
-The project was originally focused on transactive community microgrids and initiated at the [Digital Currency Initiative](https://dci.mit.edu/) of the MIT Media Lab. The [Yale Openlab](www.openlab.yale.edu) and the DCI then joined efforts and this shifted to a more finance based focus. [First prototypes](https://github.com/YaleOpenLab/smartPropertyMVP) were built using the Ethereum blockchain and presented at the MIT Media Lab's 2018 Members Weeks Demo . 
+The project was originally focused on transactive community microgrids and initiated at the [Digital Currency Initiative](https://dci.mit.edu/) of the MIT Media Lab. The [Yale Openlab](https://openlab.yale.edu) and the DCI then joined efforts and this shifted to a more finance based focus. [First prototypes](https://github.com/YaleOpenLab/smartPropertyMVP) were built using the Ethereum blockchain and presented at the MIT Media Lab's 2018 Members Weeks Demo . 
 
 
 #### PUERTO RICO'S PUBLIC SCHOOLS AND EMERGENCY SHELTERS
@@ -34,7 +34,7 @@ The full open source stack needs to cover all layers, from the energy and IoT ha
 ![StackLayers](docs/figures/FullStack.png)
 
 ### PAYMENT ARCHITECTURE USING STELLAR
-The diagram below explains the general payment logic between investors, recipients and other project entities. The payment architecture of this is built on the Stellar blockchain which enables fiat a stablecoin interactions, and digital assets (explained below) that act as proof of payment or debt and can be fungible. The integration of the IoT devices (eg. the powermeter) is what drives payments once the project is fully deployed. 
+The diagram below explains the general payment logic between investors, recipients and other project entities. The payment architecture of this is built on the Stellar blockchain which enables fiat and stablecoin interactions, and digital assets (explained below) that act as proof of payment or debt and can be fungible. The integration of the IoT devices (eg. the powermeter) is what drives payments once the project is fully deployed. 
 ![Payment Architecture](docs/figures/PaymentArchitecture.png)
 
 #### Digital Assets on Stellar
