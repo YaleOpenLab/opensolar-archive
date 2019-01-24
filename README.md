@@ -37,6 +37,12 @@ The full open source stack needs to cover all layers, from the energy and IoT ha
 The diagram below explains the general payment logic between investors, recipients and other project entities. The payment architecture of this is built on the Stellar blockchain which enables fiat and stablecoin interactions, and digital assets (explained below) that act as proof of payment or debt and can be fungible. The integration of the IoT devices (eg. the powermeter) is what drives payments once the project is fully deployed. 
 ![Payment Architecture](docs/figures/PaymentArchitecture.png)
 
+(Varunram to add process flow options for payment mechanisms)
+flows:
+Investor to project--
+Project to Contractor--
+Recipient to Project to Investor ---
+
 #### Digital Assets on Stellar
 Stellar has some design tradeoffs compared to Ethereum, especially with regard to the concept of "state" in Ethereum.
 
