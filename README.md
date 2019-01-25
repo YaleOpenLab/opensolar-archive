@@ -10,7 +10,7 @@ The payment platform is built on the Stellar blockchain, and our pilot projects 
 # Introduction
 
 #### BACKGROUND & CONTEXT
-The project was originally focused on transactive community microgrids and initiated at the [Digital Currency Initiative](https://dci.mit.edu/) of the MIT Media Lab. The [Yale Openlab](https://openlab.yale.edu) and the DCI then joined efforts and this shifted to a more finance based focus. [First prototypes](https://github.com/YaleOpenLab/smartPropertyMVP) were built using the Ethereum blockchain and presented at the MIT Media Lab's 2018 Members Weeks Demo . 
+The project was originally focused on transactive community microgrids and initiated at the [Digital Currency Initiative](https://dci.mit.edu/) of the MIT Media Lab. The [Yale Openlab](https://openlab.yale.edu) and the DCI then joined efforts and this shifted to a more finance based focus. [First prototypes](https://github.com/YaleOpenLab/smartPropertyMVP) were built using the Ethereum blockchain and presented at the MIT Media Lab's 2018 Members Weeks Demo .
 
 
 #### PUERTO RICO'S PUBLIC SCHOOLS AND EMERGENCY SHELTERS
@@ -18,7 +18,7 @@ This project has been deeply inspired by the situation facing Puerto Rico, and h
 One year after hurricane Maria hit the island, schools are still exposed to a centralized and high-carbon energy system vulnerable to climate impacts. At the same time, schools and their communities are becoming social nodes, and the Puerto Rican government and the Department of Education are working to appoint schools as emergency shelters —nodes with robust energy and communication systems— for the community to reach out in the event of unavoidable climate shocks. Financing the infrastructure for this is a key gap. The platform is being built to structure peer-to-peer solar finance and payments mechanisms to address this funding gap, and in the process replace the now outdated power payment agreement (PPA) model for residential and commercial solar, with an adaptive and data-driven pay-to-own model.
 
 # Platform System and Code Architecture
-The sections below explain key components of how this project is being built. 
+The sections below explain key components of how this project is being built.
 
 #### MAIN SMART SOLAR CONTRACT IDEA
 Investors can finance solar photovoltaic systems around the world with several layers to de-risk their investment and certify the project's social and environmental value. End-users (or 'recipients') can receive the solar systems with no downpayment, pay for the energy per kWh just like they do with the current utility, but once they pay off the cost of the system plus a low interest (i.e. a return to investors), they will fully and legally own the system (zero energy cost thereafter).
@@ -30,11 +30,18 @@ Different layers of IoT energy monitoring devices inform of the energy generated
 Other relevant contract layers include risk mitigation processes to deal with payment breaches (i.e. end-user doesn't pay for energy), and the issuance/minting of Renewable Energy and Carbon Certificates based on the kWh energy reported by the IoT devices.
 
 #### STACK LAYOUT
-The full open source stack needs to cover all layers, from the energy and IoT hardware through the blockchain and into the front-end and user experience. 
+The full open source stack needs to cover all layers, from the energy and IoT hardware through the blockchain and into the front-end and user experience.
 ![StackLayers](docs/figures/FullStack.png)
 
 ### PAYMENT ARCHITECTURE USING STELLAR
-The diagram below explains the general payment logic between investors, recipients and other project entities. The payment architecture of this is built on the Stellar blockchain which enables fiat and stablecoin interactions, and digital assets (explained below) that act as proof of payment or debt and can be fungible. The integration of the IoT devices (eg. the powermeter) is what drives payments once the project is fully deployed. 
+
+#### Why Stellar
+Stellar has some design tradeoffs compared to Ethereum, especially with regard to the concept of "state" in Ethereum.
+
+Stellar does not support a Turing complete VM like Ethereum nor a stack based system like Bitcoin. Instead, it provides a standard set of operations which are decided at the protocol level and offers SDKs to build upon the platform. While limited in function, stellar possesses powerful fundamentals which could be used to partially replicate the notion of state in Ethereum.
+
+#### Payment Architecture Overview
+The diagram below explains the general payment logic between investors, recipients and other project entities. The payment architecture of this is built on the Stellar blockchain which enables fiat and stablecoin interactions, and digital assets (explained below) that act as proof of payment or debt and can be fungible. The integration of the IoT devices (eg. the powermeter) on the IoT Hub is what drives payments once the project is fully deployed.
 ![Payment Architecture](docs/figures/PaymentArchitecture.png)
 
 There are different approaches to onboard a user (which either deposits or removes funds) onto the platform running on the stellar blockchain. Broadly, this can be split into two categories depending on whether the platform can use a bank that acts as an anchor and stablecoin issuer on Stellar.
@@ -62,43 +69,42 @@ _Fund flows_:
 Wiring money to banks is one example of interfacing with fiat money. An easy and popular alternative would be to implement a payment provider like Stripe on top of the platform's bank account so investors and recipients can choose to pay back using other means like Credit / Debit Cards. We could also use a cryptocurrency payment provider like bitpay, which allows investors and recipients to invest / pay back in cryptocurrencies along with traditional payment providers.
 
 #### Digital Assets on Stellar
-Stellar has some design tradeoffs compared to Ethereum, especially with regard to the concept of "state" in Ethereum.
+One of the core features in stellar is the easy creation of [Assets](https://www.stellar.org/developers/guides/concepts/assets.html). An Asset is anything that can be issued by a party to track ownership or provide proofs of investment / debt, etc.
 
-Stellar doesn't support a Turing complete VM like Ethereum nor a stack based system like Bitcoin. Instead, it provides a standard set of operations which are decided on the protocol level and offers SDKs to build upon the platform. While limited in function, stellar possesses powerful fundamentals which could be used to partially replicate the notion of state in Ethereum.
+We use these (Digital) Assets to track the following:
 
-One of the core features of stellar is the creation of [Assets](https://www.stellar.org/developers/guides/concepts/assets.html). An Asset is anything that can be issued by a party to track ownership or provide proofs of investment / debt, etc. 
+1. Investment in a particular asset: When a person invests eg. 2000 USD in a project, she needs some sort of irreversible proof that she has invested in that particular project. This would ideally be just stored in a variable if in Ethereum. But in Stellar, we issue an asset called "Investor Asset" once an investor invests in a particular project which is pegged 1:1 with the amount of USD invested, meaning an investor who invests 2000 USD as above would get 2000 Investor Assets in return. The Investor Asset is pseudo-unique (more on this to follow) and can be tracked with the help of its 12 character identifier.
 
-In this prototype, we use these (Digital) Assets to track multiple things:
+NOTE: Stellar limits the character limit (termed "Asset Code") of each asset to 12 characters, so this identifier is prone to  collisions above a certain number of projects. In the case collisions do arise, the project ID, Debt Assets and time of creation can be used to identify the asset. There seems to be no workaround for this limit, so we are forced to go ahead with this scheme.
 
-1. Investment in a particular asset: When a person invests say 2000 USD in a project, she needs some sort of irreversible proof that she has invested in that particular project. This would ideally be just stored in a variable if using Ethereum. But with Stellar, we issue an asset called "Investor Asset" once an investor invests in a particular project. This investor asset is issued 1:1 with the amount of eg. USD invested, meaning an investor who invests 2000 USD as explained above would get 2000 Investor Assets in return. The Investor Asset is pseudo-unique (more on this to follow) and can be tracked with the help of the 12 character identifier that stellar provides us with.
+2. Investment Tracking - When a project has reached its target goal in USD, we need to assure investors that their investment in the project is reflected in the form of debt on the recipient's side. For this, we issue "Recipient Assets" which denote that the recipient officially owes the specified amount (plus a set interest). Like the Investor Asset, this is pegged 1:1 with the amount invested.
 
-NOTE: Stellar limits the character limit of each asset to 12 characters, so the identifier is not unique. In the case collisions arise, the project ID, Debt Assets and time of creation can be used to identify the asset. There seems to be no workaround for this limit, so we are forced to go ahead with this scheme.
+3. Debt Tracking - Once a project has been installed and can generate electricity, the recipient starts to pay back towards the project based on what the IoT powermeter reports. After confirmation of each payment, we issue a Payback Asset, which is proportional to the monthly payment bill. This provides ease of accounting and quick look back on whether the recipient is not defaulting on its payments.
 
-2. When a project has reached its target goal in USD, we need to assure investors that their amount invested in the project is reflected in the form of debt. For this, we issue "Recipient Assets" which denote that the reecipient of the funds officially owes its amount (plus a set interest). Like the Investor Asset, this is 1:1 with the amount invested.
+4. Seed Investments - In some cases, the investor may choose to invest in a particular project before it has a concrete proposal by a contractor detailing the plan. In such cases, we issue the investor a Seed Investment Asset, which certifies that the investor has invested early and it may be entitled to certain benefits based owing to its early investment.
 
-3. Once a project has been installed and can generate electricity, the recipient starts to pay back towards the project based on what the IoT powermeter reports. After confirmation of each payment, we issue a Payback Asset, which is proportional to the monthly payment bill. This provides ease of accounting and quick look back on whether the recipient is not defaulting on its payments.
+For more applications which require state computation and ownership, we continue to issue relevant assets which would track ownership and history.
 
-For more notions of state and ownership, we can continue to issue relevant assets which would track ownership and history.
+Apart from ownership, assets also serve other useful functions:
 
-Apart from ownership, the assets above serve other functions  that are useful:
+1. Tradable Investor Assets: Since the investor asset is a proof of investment in a particular project, one can trade them for other investor assets like traditional property markets or we could use them to trade against USD or take a loan against this asset similar to a secondary mortgage market.
 
-1. Investor Assets are tradable: Since the investor asset is a proof of investment in a particular project, we can trade them for other investor assets like traditional property markets or we could use them to trade with USD / take a loan against this asset similar to a secondary mortgage market.
-
-2. Parties that are willing to donate to a particular recipient can choose to payback their electricity bill on their behalf or choose to buy some of their Recipient Assets in order to hedge some risk on behalf of them. This is useful to introduce guarantors, which can protect investors in a breach scenario, and thus 'blend' the capital (ie. profit vs impact focus) by taking on the risk. This can also help big charitable organizations which invest in multiple projects, and who need to keep track of their donations in an easy way and provide publicly auditable proof of their donation towards a charity.
+2. Donation Systems: Parties that are willing to donate to a particular recipient can choose to pay their electricity bill on their behalf or choose to buy some Recipient Assets in order to hedge some of the recipient's risk. This is useful to introduce guarantors, which can protect investors in a breach scenario, and thus 'blend' the capital (ie. profit vs impact focus) by taking on the risk. This can also help big charitable organizations which invest in multiple projects, and who need to keep track of their donations in an easy way and provide publicly auditable proof of their donation towards a charity.
 
 
-#### IPFS and solar project documentation
-While dealing with real world entities, we are inevitably faced with dealing with legal contracts. The platform should not worry about what's in the contract as long as it has been agreed to and vetted by both parties, so we store the contract in ipfs and commit the resulting hash in two split stellar transactions' memo fields. The memo field of stellar can only hold 28 characters, so we split the 46 character ipfs hash into two parts and pad the second hash with characters to denote that it is an ipfs hash and not some garbage value. This ipfs hash has to be checked on all parties' ends to ensure that this is the same contract that they agreed to earlier
+#### Storing Legally Binding Contracts
+While dealing with real world entities, we are inevitably faced with legal contracts. The platform should not worry about what's in the contract as long as it has been agreed to and vetted by both parties, so it stores the contract in ipfs and commits the resulting hash in two stellar transactions' memo fields (two because the character limit for the memo field is 28 bytes whereas the ipfs hash is of length 46).This hash has to be checked by all parties to ensure it is the same contract that they agreed upon earlier
 
 ### ENTITIES, PROJECTS & SMART CONTRACTS
-There are various users and entities defined in the code (and more on the way), which cater to the different functions performed by entities in the real world:
+There are various entities defined in the code (and more on the way), which cater to the different functions performed by entities in the real world:
  - PLATFORM- the platform is the server on which the projects are advertised on, and where the smart contracts that define the actor relationships are set. (i.e. OpenSolar)
- - INVESTOR - the investor is a person / organisation who invest in a particular project
+ - ISSUER - the issuer is a child entity of the platform which issues [assets](https://github.com/YaleOpenLab/OpenSolar#digital-assets-on-stellar) for each project. This issuer's account is then locked to freeze issuance.
+ - INVESTOR - the investor is a person / organisation who invests in a particular project
  - RECIPIENT - the recipient is the person / organisation / coop which receives the solar system and will then make payments to acquire it. It is often the end-user of the electricity and the legal owner of the land in which the project is developed. Additionally, in the case of a municipal bond, the recipient is often the 'issuer' of the debt instrument.
  - ORIGINATOR - the person/organisation who proposes a pre-origin contract to a recipient and requires approval from the recipient to initiate the project through its stages of development.
- - CONTRACTOR - all entities that provide services to the project and receive payments for these services. This includes consultants, lawyers, hardware providers/retailers, engineers etc. Some engineers can be contracted to solely prepare the technical aspects of a tender or RFP (request for proposal), to which other developers will bid for. 
- - DEVELOPER - the contractors who is responsible for installing the hardware, makes sure the solar panels and IoT devices work accordingly. These often require a post-installation guarantee.
- - GUARANTOR - the person/organisation who is insuring funds that will protect investors in the case of a delayed payment from the recipient's side
+ - CONTRACTOR - all entities that provide services to the project and receive payments for these services. This includes consultants, lawyers, hardware providers/retailers, engineers etc. Some engineers can be contracted to solely prepare the technical aspects of a tender or RFP (request for proposal), to which other developers will bid for.
+ - DEVELOPER - the person who is responsible for installing the hardware, makes sure the solar panels and IoT devices work accordingly. These often require a post-installation guarantee.
+ - GUARANTOR - the person/organisation who insures funds and will protect investors in the case of a delayed payment from the recipient's side.
 
 
 #### PROJECT STAGES
@@ -162,6 +168,5 @@ go get golang.org/x/tools/cmd/cover
 if you already don't have the package. Then running `go test --tags="all" -coverprofile=test.txt ./...` should run all the tests and provide coverage data. Running with the tag `travis` will omit the tests in `ipfs/` which requires [a local `go-ipfs` node running](https://michalzalecki.com/set-up-ipfs-node-on-the-server/) as described above.
 
 #### Contributing
-This is an open source project and everyone is invited to contribute value to it. It is part of an open innovation framework and published using an MIT License so that it allows compatibility with proprietary layers. 
+This is an open source project and everyone is invited to contribute value to it. It is part of an open innovation framework and published using an MIT License so that it allows compatibility with proprietary layers.
 ![Open Contributions](docs/figures/OpenContributions.png)
-
